@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Docula Blog - 3 Column Layout</title>
+    <link rel="stylesheet" href="/styles.css" />
+</head>
+
+<body>
+    <div class="container">
+        <aside class="col left">
+            <h3>Posts</h3>
+            <nav id="postList"></nav>
+        </aside>
+
+        <main class="col center">
+            <article id="post"></article>
+        </main>
+
+        <aside class="col right">
+            <h3>Table of Contents</h3>
+            <div id="toc"></div>
+        </aside>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+        async function loadPostList() {
+            try {
+                const resp = await fetch('posts/posts.json');
+                const posts = await resp.json();
+                const postList = document.getElementById('postList');
+
+                postList.innerHTML = posts.map(p => `
+                    <div class="post-item" data-file="${p.file}">
+                        ${p.title}
+                    </div>
+                `).join('');
+
+                // When clicking a post
+                document.querySelectorAll('.post-item').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const file = el.dataset.file;
+                        loadMarkdown('posts/' + file);
+                    });
+                });
+
+                // Load the first post by default
+                if (posts.length > 0) {
+                    loadMarkdown('posts/' + posts[0].file);
+                }
+
+            } catch (err) {
+                console.error('Could not load posts.json:', err);
+                document.getElementById('postList').innerHTML = '<p>No posts found.</p>';
+            }
+        }
+
+        async function loadMarkdown(filePath) {
+            const resp = await fetch(filePath);
+            const md = await resp.text();
+            const html = marked.parse(md);
+            document.getElementById('post').innerHTML = html;
+            buildTOC();
+        }
+
+        function buildTOC() {
+            const toc = document.getElementById('toc');
+            const headers = document.querySelectorAll('#post h1, #post h2, #post h3');
+            let list = '<ul>';
+            headers.forEach(h => {
+                const id = h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-');
+                h.id = id;
+                list += `<li class="toc-${h.tagName.toLowerCase()}"><a href="#${id}">${h.textContent}</a></li>`;
+            });
+            list += '</ul>';
+            toc.innerHTML = list;
+        }
+
+        loadPostList();
+    </script>
+</body>
+
+</html>

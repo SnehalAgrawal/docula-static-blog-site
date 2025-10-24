@@ -1,0 +1,11 @@
+body { font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; margin:0; padding:0; background:#fafafa; }
+.container { display:grid; grid-template-columns: 250px 1fr 250px; gap:16px; padding:16px; }
+.col { background:#fff; border-radius:8px; border:1px solid #eee; padding:16px; overflow:auto; max-height:90vh; }
+.left, .right { position:sticky; top:10px; height:fit-content; align-self:start; }
+#post h1, #post h2, #post h3 { scroll-margin-top:80px; }
+.folder { padding:6px 8px; border-radius:4px; cursor:pointer; }
+.folder:hover { background:#f0f0f0; }
+.toc-h1 { margin-left:0; }
+.toc-h2 { margin-left:12px; }
+.toc-h3 { margin-left:24px; }
+@media(max-width:900px){ .container { grid-template-columns: 1fr; } .left, .right { position:relative; } }

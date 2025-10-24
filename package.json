@@ -1,0 +1,6 @@
+{
+    "scripts": {
+        "generate": "node generate-posts.js",
+        "start": "npx serve ."
+    }
+}
